@@ -1,0 +1,5 @@
+1,Baterias Moura,Acumuladores Moura S A,817.011.090.117,09.811.654/0001-70,Rua Diario de Pernambuco 195,(81) 3411-1159,dptofiscal.moura@grupomoura.com
+2,Coca Cola,Coca Cola Industrias LTDA,81.412.89-8,45.997.418/0001-53,Praia De Botafogo 374 Andar 12,(21) 2559-1000,cocacolaltda@gmail.com
+3,Ngk,Ngk Store LTDA,90961357-40,47.637.670/0001-87,Rua Benjamin Antonio Ansai 191 ,(41) 3015-9480,processos.contabilidadescs@gmail.com
+4,Shell,Shell Brasil Petroleo LTDA,79.184.07-1,10.456.016/0001-67,Avenida Republica do Chile 00330,(21) 3984-7000,fale@shell.com
+5,Michelin,Sociedade Michelin de Participacoes Indust e Comercio LTDA,396.004.877.000,50.567.288/0001-59,Avenida Das Americas 700 Barra da Tijuca,(21) 3621-4711,juridico@michelin.com

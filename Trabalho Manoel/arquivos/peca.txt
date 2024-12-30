@@ -1,0 +1,27 @@
+1
+Oleo
+Lubrificador de motor 
+Shell
+Shell LTDA
+31.920000
+36.708000
+50
+10
+2
+Vela
+Componente do motor
+Ngk
+Ngk LTDA
+110.000000
+126.500000
+45
+20
+3
+Pneu
+Pneu aro 17 para carro
+Michelin
+Michelin LTDA
+1279.000000
+1470.849976
+16
+4

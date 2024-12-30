@@ -1,0 +1,3 @@
+Lucio Olivio Nogueira Gomes, 123.456.789-01, Socio, 7550.00
+Pedro, 123.789.456-02, Socio, 7500.00
+Heitor De Souza e Silva, 123.567.986-03, Socio, 2500.00
