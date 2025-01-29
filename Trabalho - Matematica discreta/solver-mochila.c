@@ -123,7 +123,9 @@ int main(int argc, char **argv){
 
     switch (Metodo){
         case 'E':case 'e':
-
+        resolverExaustivo();
+        escreverArquivoSaida(StrSaida, &universo, Metodo);
+        liberarMemoriaExaustivo();
         break;
 
         case 'H':case 'h':
