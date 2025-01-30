@@ -15,7 +15,10 @@ typedef struct{
     float *Razao;
 
     float Capacidade;
+
+    int *MapaDeBits;
 }Universo;
+
 
 void lerArquivoEntrada(const char* nomeArquivo, Universo* universo) {
     FILE* arquivo = fopen(nomeArquivo, "r");
@@ -27,7 +30,6 @@ void lerArquivoEntrada(const char* nomeArquivo, Universo* universo) {
     char linha[256];
     float capacidade;
     int numItens;
-
 
     fgets(linha, sizeof(linha), arquivo);
     sscanf(linha, "K %f", &capacidade);
@@ -41,6 +43,7 @@ void lerArquivoEntrada(const char* nomeArquivo, Universo* universo) {
     universo->Peso = malloc(numItens * sizeof(float));
     universo->Beneficio = malloc(numItens * sizeof(float));
     universo->Razao = malloc(numItens * sizeof(float));
+    universo->MapaDeBits = malloc(numItens * sizeof(int));
 
     for (int i = 0; i < numItens; i++) {
         fgets(linha, sizeof(linha), arquivo);
@@ -63,8 +66,10 @@ void escreverArquivoSaida(const char* nomeArquivo, Universo* universo, const cha
     float TotalBeneficio = 0;
     float TotalPeso = 0;
     for (int i = 0; i < universo->Cardinalidade; i++) {
-        TotalBeneficio += universo->Beneficio[i];
-        TotalPeso += universo->Peso[i];
+        if(universo->MapaDeBits == 1){
+            TotalBeneficio += universo->Beneficio[i];
+            TotalPeso += universo->Peso[i];
+        }
     }
 
     fprintf(arquivo,     "Instancia : %s\n",
@@ -90,14 +95,61 @@ void escreverArquivoSaida(const char* nomeArquivo, Universo* universo, const cha
             "Peso       : %.1f\n",
             "Beneficio  : %.1f\n\n", tempo_gasto, TotalPeso, TotalBeneficio);
 
-
+    int con = 0;
     for (int i = 0; i < universo->Cardinalidade; i++) {
-        fprintf(arquivo, "%s (w = %.2f, c = %.2f)\n", universo->NomeItens[i], universo->Peso[i], universo->Beneficio[i]);
-        printf("%s (w = %.2f, c = %.2f)\n", universo->NomeItens[i], universo->Peso[i], universo->Beneficio[i]);
+        if(universo->MapaDeBits == 1){
+            fprintf(arquivo, "%s (w = %.2f, c = %.2f)\n", universo->NomeItens[i], universo->Peso[i], universo->Beneficio[i]);
+            printf("%s (w = %.2f, c = %.2f)\n", universo->NomeItens[i], universo->Peso[i], universo->Beneficio[i]);
+            con = 1;
+        }
+    }
+    if(con == 0){
+        printf("Nao ha itens que caim no parametro da mochila!\n");
     }
     printf("\nFim do Processamento!\n");
 
     fclose(arquivo);
+}
+
+
+void Heuristica(Universo* universo){    
+
+    int* indice = malloc(universo->Cardinalidade * sizeof(int));
+
+    for(int j = 0; j<universo->Cardinalidade;j++){
+        universo->MapaDeBits[j] = 0;
+        universo->Razao[j] = universo->Beneficio[j]/universo->Peso[j];
+        indice[j] = j;
+    }
+    int pos_maior;
+    for(int i = 0; i<universo->Cardinalidade; i++){
+        pos_maior = i;
+        for(int j = i + 1;j < universo->Cardinalidade;j++){ 
+            if(universo->Razao[indice[j]] > universo->Razao[indice[pos_maior]]){
+                pos_maior = j;
+            }
+        }
+        int aux = indice[i];
+        indice[i] = indice[pos_maior];
+        indice[pos_maior] = aux;
+    }
+    float ComparaCapacidade, auxCapacidade = universo->Capacidade;
+    for (int i = 0; i < universo->Cardinalidade; i++) {        
+        ComparaCapacidade = auxCapacidade - universo->Peso[indice[i]];
+        
+        if(ComparaCapacidade < 0){
+            ComparaCapacidade = auxCapacidade;
+            universo->MapaDeBits[indice[i]] = 0;
+        }
+        else{
+            auxCapacidade = ComparaCapacidade;
+            universo->MapaDeBits[indice[i]] = 1;
+        }
+    }
+    free(indice);
+}
+void Exaustiva(Universo* universo){
+
 }
 
 int main(int argc, char **argv){
@@ -123,13 +175,11 @@ int main(int argc, char **argv){
 
     switch (Metodo){
         case 'E':case 'e':
-        resolverExaustivo();
-        escreverArquivoSaida(StrSaida, &universo, Metodo);
-        liberarMemoriaExaustivo();
+            Exaustiva(&universo);
         break;
 
         case 'H':case 'h':
-
+            Heuristica(&universo);
         break;
     }
 
