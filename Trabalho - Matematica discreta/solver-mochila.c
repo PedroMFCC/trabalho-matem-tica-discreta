@@ -66,18 +66,18 @@ void escreverArquivoSaida(const char* nomeArquivo, Universo* universo, const cha
     float TotalBeneficio = 0;
     float TotalPeso = 0;
     for (int i = 0; i < universo->Cardinalidade; i++) {
-        if(universo->MapaDeBits == 1){
+        if(universo->MapaDeBits[i] == 1){
             TotalBeneficio += universo->Beneficio[i];
             TotalPeso += universo->Peso[i];
         }
     }
 
-    fprintf(arquivo,     "Instancia : %s\n",
-                         "N         : %d\n",
-                         "K         : %.1f\n", nomeArquivo, universo->Cardinalidade, universo->Capacidade);
-    printf( "Instancia : %s\n",
-            "N         : %d\n",
-            "K         : %.1f\n", nomeArquivo, universo->Cardinalidade, universo->Capacidade);
+    fprintf(arquivo,     "Instancia : %s\n", nomeArquivo);
+    fprintf(arquivo,     "N         : %d\n", universo->Cardinalidade);
+    fprintf(arquivo,     "K         : %.1f\n", universo->Capacidade);
+    printf( "Instancia : %s\n", nomeArquivo);
+    printf( "N         : %d\n", universo->Cardinalidade);
+    printf( "K         : %.1f\n", universo->Capacidade);
     if(Metodo == 'H'){
         fprintf(arquivo,"Metodo     : Heuristica\n");
         printf("Metodo     : Heuristica\n");
@@ -88,16 +88,16 @@ void escreverArquivoSaida(const char* nomeArquivo, Universo* universo, const cha
     }
     fim = clock();
     tempo_gasto = ((float)(fim - inicio)) / CLOCKS_PER_SEC; // Calcula o tempo em segundos
-    fprintf(arquivo,    "Tempo      : %.3f segundos\n",
-                        "Peso       : %.1f\n",
-                        "Beneficio  : %.1f\n\n", tempo_gasto, TotalPeso, TotalBeneficio);
-    printf( "Tempo      : %.3f segundos\n",
-            "Peso       : %.1f\n",
-            "Beneficio  : %.1f\n\n", tempo_gasto, TotalPeso, TotalBeneficio);
+    fprintf(arquivo,    "Tempo      : %.3f segundos\n", tempo_gasto);
+    fprintf(arquivo,    "Peso       : %.1f\n", TotalPeso);
+    fprintf(arquivo,    "Beneficio  : %.1f\n\n", TotalBeneficio);
+    printf( "Tempo      : %.3f segundos\n", tempo_gasto);
+    printf( "Peso       : %.1f\n", TotalPeso);
+    printf( "Beneficio  : %.1f\n\n", TotalBeneficio);
 
     int con = 0;
     for (int i = 0; i < universo->Cardinalidade; i++) {
-        if(universo->MapaDeBits == 1){
+        if(universo->MapaDeBits[i] == 1){
             fprintf(arquivo, "%s (w = %.2f, c = %.2f)\n", universo->NomeItens[i], universo->Peso[i], universo->Beneficio[i]);
             printf("%s (w = %.2f, c = %.2f)\n", universo->NomeItens[i], universo->Peso[i], universo->Beneficio[i]);
             con = 1;
@@ -107,6 +107,15 @@ void escreverArquivoSaida(const char* nomeArquivo, Universo* universo, const cha
         printf("Nao ha itens que caim no parametro da mochila!\n");
     }
     printf("\nFim do Processamento!\n");
+
+    for (int i = 0; i < universo->Cardinalidade; i++) {
+        free(universo->NomeItens[i]);
+    }
+    free(universo->NomeItens);
+    free(universo->Peso);
+    free(universo->Beneficio);
+    free(universo->Razao);
+    free(universo->MapaDeBits);
 
     fclose(arquivo);
 }
