@@ -157,9 +157,69 @@ void Heuristica(Universo* universo){
     }
     free(indice);
 }
+
+
 void Exaustiva(Universo* universo){
+    
+    int melhor_beneficio = 0;
+    int melhor_peso = 0;
+    int *melhor_comb = (int *)malloc(universo->Cardinalidade * sizeof(int));  //Gera espaço para melhor combinação
+    for (int i = 0; i < universo->Cardinalidade; i++) {
+        melhor_comb[i] = -1;  //Seta todos com -1 (indicando que o item não foi selecionado)
+    }
+
+    //Gera todas as combinações
+    for (int i = 1; i < (1 << universo->Cardinalidade); i++) {
+        int peso_total = 0, beneficio_total = 0;
+        int *combinacao_atual = (int *)malloc(universo->Cardinalidade * sizeof(int));  // Armazenar os itens dessa combinação
+        int num_itens_selecionados = 0;
+
+        //Verificar quais itens estão incluídos na combinação
+        for (int j = 0; j < universo->Cardinalidade; j++) {
+            if (i & (1 << j)) {  // Se o num j de i for 1, incluir o item j
+                peso_total += universo->Peso[j];                 //soma beneficio
+                beneficio_total += universo->Beneficio[j];       //soma peso
+                combinacao_atual[num_itens_selecionados++] = j;  // Armazenar índice do item
+            }
+        }
+        
+
+        //Se o peso total e a capacidade e o benefício bater ele muda
+        if (peso_total <= universo->Cardinalidade && beneficio_total > melhor_beneficio) {
+            melhor_beneficio = beneficio_total;
+            melhor_peso = peso_total;
+            //Caso troque, salva a combinação que gerou o melhor beneficio
+            for (int j = 0; j < num_itens_selecionados; j++) {
+                melhor_comb[j] = combinacao_atual[j];  //Salva o índice dos itens
+            }
+        }
+        //Liberar memória alocada para a combinação atual
+        free(combinacao_atual);
+    }
+    
+    for(int j = 0; j<universo->Cardinalidade;j++){
+        universo->MapaDeBits[j] = 0;
+    }
+
+    float ComparaCapacidade, auxCapacidade = universo->Capacidade;
+    for (int i = 0; i < universo->Cardinalidade; i++) {        
+        ComparaCapacidade = auxCapacidade - universo->Peso[melhor_comb[i]];
+        
+        if(ComparaCapacidade < 0){
+            ComparaCapacidade = auxCapacidade;
+            universo->MapaDeBits[melhor_comb[i]] = 0;
+        }
+        else{
+            auxCapacidade = ComparaCapacidade;
+            universo->MapaDeBits[melhor_comb[i]] = 1;
+        }
+    }
+    //Liberar memória alocada para a melhor combinação
+    free(melhor_comb);
 
 }
+
+
 
 int main(int argc, char **argv){
     inicio = clock();
