@@ -159,25 +159,25 @@ void Heuristica(Universo* universo){
 }
 void Exaustiva(Universo* universo){
     
-    int melhor_beneficio = 0;
-    int melhor_peso = 0;
-    int *melhor_comb = (int *)malloc(universo->Cardinalidade * sizeof(int));  //Gera espaço para melhor combinação
+    float melhor_beneficio = 0;
+    float melhor_peso = 0;
+    int *melhor_comb = (int *)malloc(universo->Cardinalidade * sizeof(int));
     for (int i = 0; i < universo->Cardinalidade; i++) {
-        melhor_comb[i] = -1;  //Seta todos com -1 (indicando que o item não foi selecionado)
+        melhor_comb[i] = -1;  
     }
 
-    //Gera todas as combinações
+    
     for (int i = 1; i < (1 << universo->Cardinalidade); i++) {
-        int peso_total = 0, beneficio_total = 0;
-        int *combinacao_atual = (int *)malloc(universo->Cardinalidade * sizeof(int));  // Armazenar os itens dessa combinação
+        float peso_total = 0, beneficio_total = 0;
+        int *combinacao_atual = (int *)malloc(universo->Cardinalidade * sizeof(int));
         int num_itens_selecionados = 0;
 
-        //Verificar quais itens estão incluídos na combinação
+        
         for (int j = 0; j < universo->Cardinalidade; j++) {
-            if (i & (1 << j)) {  // Se o num j de i for 1, incluir o item j
-                peso_total += universo->Peso[j];                 //soma beneficio
-                beneficio_total += universo->Beneficio[j];       //soma peso
-                combinacao_atual[num_itens_selecionados++] = j;  // Armazenar índice do item
+            if (i & (1 << j)) { 
+                peso_total += universo->Peso[j]; 
+                beneficio_total += universo->Beneficio[j];
+                combinacao_atual[num_itens_selecionados++] = j; 
             }
         }
         
