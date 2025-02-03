@@ -5,6 +5,8 @@
 clock_t inicio, fim;
 
 typedef struct{
+    char *descricao;
+
     int Cardinalidade;
 
     char **NomeItens;
@@ -31,6 +33,11 @@ void lerArquivoEntrada(const char* nomeArquivo, Universo* universo) {
     float capacidade;
     int numItens;
 
+    universo->descricao = malloc(256 * sizeof(char));
+
+    fgets(linha, sizeof(linha), arquivo);
+    sscanf(linha, "# %[^\n]", universo->descricao);
+
     fgets(linha, sizeof(linha), arquivo);
     sscanf(linha, "K %f", &capacidade);
     universo->Capacidade = capacidade;
@@ -55,7 +62,7 @@ void lerArquivoEntrada(const char* nomeArquivo, Universo* universo) {
     fclose(arquivo);
 }
 
-void escreverArquivoSaida(const char* displayArquivo, const char* nomeArquivo, Universo* universo, const char Metodo) {
+void escreverArquivoSaida(const char* nomeArquivo, Universo* universo, const char Metodo) {
     float tempo_gasto;
     FILE* arquivo = fopen(nomeArquivo, "w");
     if (!arquivo) {
@@ -72,10 +79,10 @@ void escreverArquivoSaida(const char* displayArquivo, const char* nomeArquivo, U
         }
     }
 
-    fprintf(arquivo,     "Instancia  : %s\n", displayArquivo);
+    fprintf(arquivo,     " %s\n", universo->descricao);
     fprintf(arquivo,     "N          : %d\n", universo->Cardinalidade);
     fprintf(arquivo,     "K          : %.1f\n", universo->Capacidade);
-    printf( "Instancia  : %s\n", nomeArquivo);
+    printf( "Instancia  : %s\n", universo->descricao);
     printf( "N          : %d\n", universo->Cardinalidade);
     printf( "K          : %.1f\n", universo->Capacidade);
     if(Metodo == 'H'){
@@ -87,11 +94,11 @@ void escreverArquivoSaida(const char* displayArquivo, const char* nomeArquivo, U
         printf("Metodo     : Exaustão\n");
     }
     fim = clock();
-    tempo_gasto = ((float)(fim - inicio)) / CLOCKS_PER_SEC; // Calcula o tempo em segundos
+    tempo_gasto = ((float)(fim - inicio)) / CLOCKS_PER_SEC;
     fprintf(arquivo,    "Tempo      : %.3f segundos\n", tempo_gasto);
     fprintf(arquivo,    "Peso       : %.1f\n", TotalPeso);
     fprintf(arquivo,    "Beneficio  : %.1f\n\n", TotalBeneficio);
-    printf( "Tempo      : %.3f segundos\n", tempo_gasto);
+    printf( "Tempo      : %f segundos\n", tempo_gasto);
     printf( "Peso       : %.1f\n", TotalPeso);
     printf( "Beneficio  : %.1f\n\n", TotalBeneficio);
 
@@ -111,6 +118,7 @@ void escreverArquivoSaida(const char* displayArquivo, const char* nomeArquivo, U
     for (int i = 0; i < universo->Cardinalidade; i++) {
         free(universo->NomeItens[i]);
     }
+    free(universo->descricao);
     free(universo->NomeItens);
     free(universo->Peso);
     free(universo->Beneficio);
@@ -182,16 +190,15 @@ void Exaustiva(Universo* universo){
         }
         
 
-        //Se o peso total e a capacidade e o benefício bater ele muda
         if (peso_total <= universo->Capacidade && beneficio_total > melhor_beneficio) {
             melhor_beneficio = beneficio_total;
             melhor_peso = peso_total;
-            //Caso troque, salva a combinação que gerou o melhor beneficio
+            
             for (int j = 0; j < num_itens_selecionados; j++) {
-                melhor_comb[j] = combinacao_atual[j];  //Salva o índice dos itens
+                melhor_comb[j] = combinacao_atual[j];  
             }
         }
-        //Liberar memória alocada para a combinação atual
+
         free(combinacao_atual);
     }
     
@@ -212,7 +219,6 @@ void Exaustiva(Universo* universo){
             universo->MapaDeBits[melhor_comb[i]] = 1;
         }
     }
-    //Liberar memória alocada para a melhor combinação
     free(melhor_comb);
 
 }
@@ -248,7 +254,7 @@ int main(int argc, char **argv){
         break;
     }
 
-    escreverArquivoSaida(StrEntrada, StrSaida, &universo, Metodo);
+    escreverArquivoSaida(StrSaida, &universo, Metodo);
 
     exit(0);
 }
