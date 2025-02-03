@@ -55,7 +55,7 @@ void lerArquivoEntrada(const char* nomeArquivo, Universo* universo) {
     fclose(arquivo);
 }
 
-void escreverArquivoSaida(const char* nomeArquivo, Universo* universo, const char Metodo) {
+void escreverArquivoSaida(const char* displayArquivo, const char* nomeArquivo, Universo* universo, const char Metodo) {
     float tempo_gasto;
     FILE* arquivo = fopen(nomeArquivo, "w");
     if (!arquivo) {
@@ -72,12 +72,12 @@ void escreverArquivoSaida(const char* nomeArquivo, Universo* universo, const cha
         }
     }
 
-    fprintf(arquivo,     "Instancia : %s\n", nomeArquivo);
-    fprintf(arquivo,     "N         : %d\n", universo->Cardinalidade);
-    fprintf(arquivo,     "K         : %.1f\n", universo->Capacidade);
-    printf( "Instancia : %s\n", nomeArquivo);
-    printf( "N         : %d\n", universo->Cardinalidade);
-    printf( "K         : %.1f\n", universo->Capacidade);
+    fprintf(arquivo,     "Instancia  : %s\n", displayArquivo);
+    fprintf(arquivo,     "N          : %d\n", universo->Cardinalidade);
+    fprintf(arquivo,     "K          : %.1f\n", universo->Capacidade);
+    printf( "Instancia  : %s\n", nomeArquivo);
+    printf( "N          : %d\n", universo->Cardinalidade);
+    printf( "K          : %.1f\n", universo->Capacidade);
     if(Metodo == 'H'){
         fprintf(arquivo,"Metodo     : Heuristica\n");
         printf("Metodo     : Heuristica\n");
@@ -104,7 +104,7 @@ void escreverArquivoSaida(const char* nomeArquivo, Universo* universo, const cha
         }
     }
     if(con == 0){
-        printf("Nao ha itens que caim no parametro da mochila!\n");
+        printf("Nao ha itens que caibam no parametro da mochila!\n");
     }
     printf("\nFim do Processamento!\n");
 
@@ -157,8 +157,6 @@ void Heuristica(Universo* universo){
     }
     free(indice);
 }
-
-
 void Exaustiva(Universo* universo){
     
     int melhor_beneficio = 0;
@@ -185,7 +183,7 @@ void Exaustiva(Universo* universo){
         
 
         //Se o peso total e a capacidade e o benefício bater ele muda
-        if (peso_total <= universo->Cardinalidade && beneficio_total > melhor_beneficio) {
+        if (peso_total <= universo->Capacidade && beneficio_total > melhor_beneficio) {
             melhor_beneficio = beneficio_total;
             melhor_peso = peso_total;
             //Caso troque, salva a combinação que gerou o melhor beneficio
@@ -219,8 +217,6 @@ void Exaustiva(Universo* universo){
 
 }
 
-
-
 int main(int argc, char **argv){
     inicio = clock();
     char *StrEntrada;
@@ -252,7 +248,7 @@ int main(int argc, char **argv){
         break;
     }
 
-    escreverArquivoSaida(StrSaida, &universo, Metodo);
+    escreverArquivoSaida(StrEntrada, StrSaida, &universo, Metodo);
 
     exit(0);
 }
