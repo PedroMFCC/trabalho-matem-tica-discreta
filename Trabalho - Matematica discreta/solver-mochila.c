@@ -23,6 +23,7 @@ typedef struct{
 
 
 void lerArquivoEntrada(const char* nomeArquivo, Universo* universo) {
+    
     FILE* arquivo = fopen(nomeArquivo, "r");
     if (!arquivo) {
         perror("Erro ao abrir o arquivo");
@@ -170,29 +171,25 @@ void Exaustiva(Universo* universo){
     float melhor_beneficio = 0;
     float melhor_peso = 0;
     int *melhor_comb = (int *)malloc(universo->Cardinalidade * sizeof(int));
-    for (int i = 0; i < universo->Cardinalidade; i++) {
-        melhor_comb[i] = -1;  
-    }
+    int melhor_tamanho = 0;  
 
-    
-    for (int i = 1; i < (1 << universo->Cardinalidade); i++) {
+    for (int i = 1; i < (1 << universo->Cardinalidade); i++) {  
         float peso_total = 0, beneficio_total = 0;
         int *combinacao_atual = (int *)malloc(universo->Cardinalidade * sizeof(int));
         int num_itens_selecionados = 0;
 
-        
         for (int j = 0; j < universo->Cardinalidade; j++) {
-            if (i & (1 << j)) { 
+            if (i & (1 << j)) {  
                 peso_total += universo->Peso[j]; 
                 beneficio_total += universo->Beneficio[j];
-                combinacao_atual[num_itens_selecionados++] = j; 
+                combinacao_atual[num_itens_selecionados++] = j;  
             }
         }
-        
 
         if (peso_total <= universo->Capacidade && beneficio_total > melhor_beneficio) {
             melhor_beneficio = beneficio_total;
             melhor_peso = peso_total;
+            melhor_tamanho = num_itens_selecionados;  
             
             for (int j = 0; j < num_itens_selecionados; j++) {
                 melhor_comb[j] = combinacao_atual[j];  
@@ -201,25 +198,26 @@ void Exaustiva(Universo* universo){
 
         free(combinacao_atual);
     }
-    
-    for(int j = 0; j<universo->Cardinalidade;j++){
+
+    for (int j = 0; j < universo->Cardinalidade; j++) {
         universo->MapaDeBits[j] = 0;
     }
 
-    float ComparaCapacidade, auxCapacidade = universo->Capacidade;
-    for (int i = 0; i < universo->Cardinalidade; i++) {        
-        ComparaCapacidade = auxCapacidade - universo->Peso[melhor_comb[i]];
-        
-        if(ComparaCapacidade < 0){
-            ComparaCapacidade = auxCapacidade;
-            universo->MapaDeBits[melhor_comb[i]] = 0;
-        }
-        else{
-            auxCapacidade = ComparaCapacidade;
-            universo->MapaDeBits[melhor_comb[i]] = 1;
+    float capacidade_restante = universo->Capacidade;
+    for (int i = 0; i < melhor_tamanho; i++) {  
+        int item = melhor_comb[i];
+
+        if (capacidade_restante >= universo->Peso[item]) {
+            universo->MapaDeBits[item] = 1;
+            capacidade_restante -= universo->Peso[item];
+        } else {
+            universo->MapaDeBits[item] = 0;  
         }
     }
+
     free(melhor_comb);
+
+
 
 }
 
